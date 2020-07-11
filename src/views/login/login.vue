@@ -20,7 +20,7 @@
               <el-input v-model="form.code" placeholder="请输入验证码"></el-input>
             </el-col>
             <el-col :span="8">
-              <img class="captcha" src="@/assets/img/captcha.png" alt />
+              <img class="captcha" :src="captcha" alt />
             </el-col>
           </el-row>
         </el-form-item>
@@ -51,6 +51,7 @@ export default {
   },
   data() {
     return {
+      captcha: process.env.VUE_APP_URL + "/captcha?type=login",
       form: {
         phone: "",
         password: "",

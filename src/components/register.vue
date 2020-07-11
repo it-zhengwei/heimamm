@@ -3,21 +3,21 @@
     <div slot="title" class="title">用户注册</div>
     <el-form :model="register_form" label-width="80px" :rules="register_rules">
       <el-form-item label="昵称">
-        <el-input placeholder="请输入用户名"></el-input>
+        <el-input v-model="register_form.username" placeholder="请输入用户名"></el-input>
       </el-form-item>
       <el-form-item label="邮箱">
-        <el-input placeholder="请输入邮箱"></el-input>
+        <el-input v-model="register_form.email" placeholder="请输入邮箱"></el-input>
       </el-form-item>
       <el-form-item label="手机">
-        <el-input placeholder="请输入手机号码"></el-input>
+        <el-input v-model="register_form.phone" placeholder="请输入手机号码"></el-input>
       </el-form-item>
       <el-form-item label="密码">
-        <el-input show-password="true" placeholder="请输入密码"></el-input>
+        <el-input v-model="register_form.password" show-password="true" placeholder="请输入密码"></el-input>
       </el-form-item>
       <el-form-item label="图形码">
         <el-row>
           <el-col :span="16">
-            <el-input placeholder="请输入图形码"></el-input>
+            <el-input v-model="register_form.type" placeholder="请输入图形码"></el-input>
           </el-col>
           <el-col :span="8">
             <img src="@/assets/logo.png" alt />
@@ -27,7 +27,7 @@
       <el-form-item label="验证码">
         <el-row>
           <el-col :span="16">
-            <el-input placeholder="请输入验证码"></el-input>
+            <el-input v-model="register_form.rcode" placeholder="请输入验证码"></el-input>
           </el-col>
           <el-col :span="8">
             <el-button>获取用户验证码</el-button>
