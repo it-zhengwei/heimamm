@@ -7,7 +7,7 @@
       label-width="80px"
       :rules="rules"
     >
-      <el-form-item label="头像" prop="icon">
+      <el-form-item label="头像" prop="avatar">
         <el-upload
           class="upload"
           :action="icon_url"
@@ -47,43 +47,56 @@
       </el-form-item>
       <el-form-item label="图形码" prop="type">
         <el-row>
-          <el-col :span="16">
+          <el-col :span="14">
             <el-input
               v-model="register_form.type"
               placeholder="请输入图形码"
             ></el-input>
           </el-col>
-          <el-col :span="7" :offset="1">
+          <el-col :span="8" :offset="1">
             <img class="type" @click="refresh" :src="type_icon" alt />
           </el-col>
         </el-row>
       </el-form-item>
       <el-form-item label="验证码" prop="rcode">
         <el-row>
-          <el-col :span="16">
+          <el-col :span="14">
             <el-input
               v-model="register_form.rcode"
               placeholder="请输入验证码"
             ></el-input>
           </el-col>
-          <el-col :span="7" :offset="1">
-            <el-button @click="getRcode">获取用户验证码</el-button>
+          <el-col :span="8" :offset="1">
+            <el-button @click="getRcode" :disabled="msg < 5"
+              ><span v-if="msg == 5">获取用户验证码</span
+              ><span v-else>{{ msg + 1 }}</span></el-button
+            >
           </el-col>
         </el-row>
       </el-form-item>
     </el-form>
     <div slot="footer" class="footer">
-      <el-button @click="quxiao">取消</el-button>
+      <el-button @click="bol = false">取消</el-button>
       <el-button type="primary" @click="submit">确定</el-button>
     </div>
   </el-dialog>
 </template>
 
 <script>
-import { getCaptcha } from "@/api/getCaptcha.js"
+import { getCaptcha, register } from "@/api/getCaptcha.js"
 export default {
+  watch: {
+    bol(newVal) {
+      if (newVal == false) {
+        this.$refs.form.resetFields()
+        this.iconImage = ""
+      }
+    },
+  },
   data() {
     return {
+      something: "",
+      msg: 5,
       type_icon: process.env.VUE_APP_URL + "/captcha?type=sendsms",
       icon_url: process.env.VUE_APP_URL + "/uploads",
       iconImage: "",
@@ -92,11 +105,11 @@ export default {
         username: "",
         phone: "",
         email: "",
-
+        type: "",
         password: "",
         rcode: "",
-        type: "",
-        icon: "",
+
+        avatar: "",
       },
       rules: {
         username: [{ required: true, message: "必填", trigger: "change" }],
@@ -148,7 +161,7 @@ export default {
           },
           { required: true, message: "必填", trigger: "change" },
         ],
-        icon: [{ required: true, message: "必填", trigger: "change" }],
+        avatar: [{ required: true, message: "必填", trigger: "change" }],
       },
     }
   },
@@ -166,26 +179,32 @@ export default {
           num++
         }
         if (num == 2) {
+          this.msg--
+          let timeId = setInterval(() => {
+            this.msg--
+            if (this.msg <= -1) {
+              clearInterval(timeId)
+              this.msg = 5
+            }
+          }, 1000)
           getCaptcha({
             code: this.register_form.type,
             phone: this.register_form.phone,
           })
             .then((res) => {
-              // window.console.log(res)
+              // window.console.log("哈哈")
               //this.$message里的提示信息要字符串
-              this.$message.success(res.data.data.captcha + "")
+              if (res.data.code == 200) {
+                this.$message.success(res.data.data.captcha + "")
+              }
             })
             .catch((error) => {
               window.console.log(error)
             })
         }
-        window.console.log(error)
       })
     },
-    quxiao() {
-      this.$refs.form.resetFields()
-      this.bol = false
-    },
+
     beforeupload(file) {
       let size = file.size / 1024 / 1024 < 3
       let type = file.type == "image/jpeg" || file.type == "image/png"
@@ -199,10 +218,9 @@ export default {
     },
     success(res) {
       // window.console.log(res);
-      this.register_form.icon =
-        process.env.VUE_APP_URL + "/" + res.data.file_path
+      this.register_form.avatar = res.data.file_path
       //手动触发验证   如果传了值 就验证通过 error是空  如果没有传值 验证不通过 error返回错误信息
-      this.$refs.form.validateField("icon", (error) =>
+      this.$refs.form.validateField(["avatar"], (error) =>
         window.console.log(error)
       )
       this.iconImage = process.env.VUE_APP_URL + "/" + res.data.file_path
@@ -210,14 +228,19 @@ export default {
     submit() {
       this.$refs.form.validate((v) => {
         if (v) {
-          this.$message({
-            type: "success",
-            message: "注册成功",
+          register(this.register_form).then((res) => {
+            if (res.data.code == 200) {
+              this.$message({
+                type: "success",
+                message: "注册成功",
+              })
+              this.bol = false
+            }
           })
         } else {
           this.$message({
             type: "error",
-            message: "注册失败",
+            message: "请完善信息",
           })
         }
       })
