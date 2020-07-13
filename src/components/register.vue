@@ -49,7 +49,7 @@
       </el-form-item>
     </el-form>
     <div slot="footer" class="footer">
-      <el-button @click="bol=false">取消</el-button>
+      <el-button @click="quxiao">取消</el-button>
       <el-button type="primary" @click="submit">确定</el-button>
     </div>
   </el-dialog>
@@ -67,7 +67,7 @@ export default {
         username: "",
         phone: "",
         email: "",
-        avatar: "",
+
         password: "",
         rcode: "",
         type: "",
@@ -75,17 +75,63 @@ export default {
       },
       rules: {
         username: [{ required: true, message: "必填", trigger: "change" }],
-        phone: [{ required: true, message: "必填", trigger: "change" }],
-        email: [{ required: true, message: "必填", trigger: "change" }],
-        avatar: [{ required: true, message: "必填", trigger: "change" }],
+        phone: [
+          { required: true, message: "必填", trigger: "change" },
+          {
+            validator: (rule, value, callback) => {
+              if (
+                /^(0|86|17951)?(13[0-9]|15[012356789]|166|17[3678]|18[0-9]|14[57])[0-9]{8}$/.test(
+                  value
+                )
+              ) {
+                callback();
+              } else {
+                callback(new Error("请输入正确的手机号"));
+              }
+            },
+            trigger: "change"
+          }
+        ],
+        email: [
+          { required: true, message: "必填", trigger: "change" },
+          {
+            validator: (rule, value, callback) => {
+              let guizhe = /\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*/;
+
+              if (guizhe.test(value)) {
+                callback();
+              } else {
+                callback(new Error("请输入正确的邮箱"));
+              }
+            },
+            trigger: "change"
+          }
+        ],
+
         password: [{ required: true, message: "必填", trigger: "change" }],
         rcode: [{ required: true, message: "必填", trigger: "change" }],
-        type: [{ required: true, message: "必填", trigger: "change" }],
+        type: [
+          { required: true, message: "必填", trigger: "change" },
+          {
+            validator: (rule, value, callback) => {
+              if (/^\d{4}$/.test(value)) {
+                callback();
+              } else {
+                callback(new Error("只能输入4个数字"));
+              }
+            },
+            trigger: "change"
+          }
+        ],
         icon: [{ required: true, message: "必填", trigger: "change" }]
       }
     };
   },
   methods: {
+    quxiao() {
+      this.$refs.form.resetFields();
+      this.bol = false;
+    },
     beforeupload(file) {
       let size = file.size / 1024 / 1024 < 3;
       let type = file.type == "image/jpeg" || file.type == "image/png";
@@ -101,6 +147,8 @@ export default {
       // window.console.log(res);
       this.register_form.icon =
         process.env.VUE_APP_URL + "/" + res.data.file_path;
+      //手动触发验证   如果传了值 就验证通过 error是空  如果没有传值 验证不通过 error返回错误信息
+      this.$refs.form.validateField("icon", error => window.console.log(error));
       this.iconImage = process.env.VUE_APP_URL + "/" + res.data.file_path;
     },
     submit() {
