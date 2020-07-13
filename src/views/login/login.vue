@@ -61,7 +61,20 @@ export default {
       rules: {
         phone: [
           { required: "true", message: "请输入手机号", trigger: "change" },
-          { min: 11, max: 11, message: "手机号不能少于11位", trigger: "change" }
+          {
+            validator: (rule, value, callback) => {
+              if (
+                /^(0|86|17951)?(13[0-9]|15[012356789]|166|17[3678]|18[0-9]|14[57])[0-9]{8}$/.test(
+                  value
+                )
+              ) {
+                callback();
+              } else {
+                callback(new Error("请输入正确的手机号"));
+              }
+            },
+            trigger: "change"
+          }
         ],
         password: [
           { required: "true", message: "请输入密码", trigger: "change" },
@@ -74,7 +87,16 @@ export default {
         ],
         code: [
           { required: "true", message: "请输入验证码", trigger: "change" },
-          { min: 4, max: 4, message: "验证码错误", trigger: "change" }
+          {
+            validator: (rule, value, callback) => {
+              if (/^\d{4}$/.test(value)) {
+                callback();
+              } else {
+                callback(new Error("只能是4个数字"));
+              }
+            },
+            trigger: "change"
+          }
         ],
         isTrue: [{ required: "true", message: "请勾选", trigger: "change" }]
       }
