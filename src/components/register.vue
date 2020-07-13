@@ -80,7 +80,7 @@
 </template>
 
 <script>
-import axios from "axios"
+import { getCaptcha } from "@/api/getCaptcha.js"
 export default {
   data() {
     return {
@@ -166,14 +166,9 @@ export default {
           num++
         }
         if (num == 2) {
-          axios({
-            method: "post",
-            url: process.env.VUE_APP_URL + "/sendsms",
-            data: {
-              code: this.register_form.type,
-              phone: this.register_form.phone,
-            },
-            withCredentials: true,
+          getCaptcha({
+            code: this.register_form.type,
+            phone: this.register_form.phone,
           })
             .then((res) => {
               // window.console.log(res)
