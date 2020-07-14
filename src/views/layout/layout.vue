@@ -14,12 +14,36 @@
           </li>
           <li class="username">{{userList.username}},您好</li>
           <li class="layout_out">
-            <el-button type="primary">退出</el-button>
+            <el-button type="primary" @click="Exit">退出</el-button>
           </li>
         </ul>
       </el-header>
       <el-container>
-        <el-aside width="200px" class="nav">Aside</el-aside>
+        <el-aside width="200px" class="nav">
+          <el-menu default-active="2" class="el-menu-vertical-demo">
+            <el-menu-item index="2">
+              <i class="el-icon-menu"></i>
+              <span slot="title">数据概览</span>
+            </el-menu-item>
+
+            <el-menu-item index="4">
+              <i class="el-icon-setting"></i>
+              <span slot="title">用户列表</span>
+            </el-menu-item>
+            <el-menu-item index="4">
+              <i class="el-icon-setting"></i>
+              <span slot="title">题库列表</span>
+            </el-menu-item>
+            <el-menu-item index="4">
+              <i class="el-icon-setting"></i>
+              <span slot="title">企业列表</span>
+            </el-menu-item>
+            <el-menu-item index="4">
+              <i class="el-icon-setting"></i>
+              <span slot="title">学科列表</span>
+            </el-menu-item>
+          </el-menu>
+        </el-aside>
         <el-main class="main">Main</el-main>
       </el-container>
     </el-container>
@@ -27,13 +51,28 @@
 </template>
 
 <script>
-import { getUser } from "@/api/getUser.js";
+//导入删除token的方法
+import { removeItem } from "@/utils/local.js";
+import { getUser, exit } from "@/api/getUser.js";
 export default {
   data() {
     return {
       baseUrl: process.env.VUE_APP_URL,
       userList: ""
     };
+  },
+  methods: {
+    //退出
+    Exit() {
+      exit().then(res => {
+        //提示用户
+        this.$message.success("退出成功" + res.message);
+        //删除token
+        removeItem();
+        //跳转到登录页
+        this.$router.push("/login");
+      });
+    }
   },
   created() {
     getUser().then(res => {

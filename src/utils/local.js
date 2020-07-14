@@ -4,4 +4,7 @@ function setItem(value) {
 function getItem() {
   return window.localStorage.getItem("token")
 }
-export { setItem, getItem }
+function removeItem() {
+  window.localStorage.removeItem("token")
+}
+export { setItem, getItem, removeItem }

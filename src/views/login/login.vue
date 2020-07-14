@@ -79,21 +79,7 @@ export default {
           }
         ],
         password: [
-          { required: "true", message: "请输入密码", trigger: "change" },
-          {
-            validator: (rule, value, callback) => {
-              if (
-                /^(0|86|17951)?(13[0-9]|15[012356789]|166|17[3678]|18[0-9]|14[57])[0-9]{8}$/.test(
-                  value
-                )
-              ) {
-                callback();
-              } else {
-                callback(new Error("请输入正确的手机号码"));
-              }
-            },
-            trigger: "change"
-          }
+          { required: "true", message: "请输入密码", trigger: "change" }
         ],
 
         code: [
