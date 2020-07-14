@@ -43,4 +43,12 @@ function register(data) {
     data,
   })
 }
-export { getCaptcha, register }
+
+function login(data) {
+  return newAxios({
+    url: "/login",
+    method: "post",
+    data,
+  })
+}
+export { getCaptcha, register, login }
