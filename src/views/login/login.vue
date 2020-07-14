@@ -20,7 +20,7 @@
               <el-input v-model="form.code" placeholder="请输入验证码"></el-input>
             </el-col>
             <el-col :span="8">
-              <img class="captcha" :src="captcha" alt />
+              <img class="captcha" @click="refresh" :src="captcha" alt />
             </el-col>
           </el-row>
         </el-form-item>
@@ -44,6 +44,8 @@
 </template>
 
 <script>
+import { setItem } from "@/utils/local.js";
+import { login } from "@/api/getCaptcha.js";
 import register from "@/components/register.vue";
 export default {
   components: {
@@ -56,7 +58,7 @@ export default {
         phone: "",
         password: "",
         code: "",
-        isTrue: []
+        isTrue: ""
       },
       rules: {
         phone: [
@@ -79,12 +81,21 @@ export default {
         password: [
           { required: "true", message: "请输入密码", trigger: "change" },
           {
-            min: 6,
-            max: 12,
-            message: "密码不能少于6位和大于12位",
+            validator: (rule, value, callback) => {
+              if (
+                /^(0|86|17951)?(13[0-9]|15[012356789]|166|17[3678]|18[0-9]|14[57])[0-9]{8}$/.test(
+                  value
+                )
+              ) {
+                callback();
+              } else {
+                callback(new Error("请输入正确的手机号码"));
+              }
+            },
             trigger: "change"
           }
         ],
+
         code: [
           { required: "true", message: "请输入验证码", trigger: "change" },
           {
@@ -98,7 +109,18 @@ export default {
             trigger: "change"
           }
         ],
-        isTrue: [{ required: "true", message: "请勾选", trigger: "change" }]
+        isTrue: [
+          { required: "true", message: "请勾选协议", trigger: "change" },
+          {
+            validator: (rule, value, callback) => {
+              if (value == true) {
+                callback();
+              } else {
+                callback(new Error("请勾选协议"));
+              }
+            }
+          }
+        ]
       }
     };
   },
@@ -106,20 +128,29 @@ export default {
     login() {
       this.$refs.form.validate(v => {
         if (v) {
-          this.$message({
-            message: "登录成功",
-            type: "success"
+          login(this.form).then(res => {
+            // window.console.log(res);
+            setItem(res.data.token);
+            this.$message({
+              message: "登录成功",
+              type: "success"
+            });
+            this.$router.push("/layout");
           });
         } else {
           this.$message({
             type: "error",
-            message: "登录失败"
+            message: "请完善信息"
           });
         }
       });
     },
     register() {
       this.$refs.register.bol = true;
+    },
+    refresh() {
+      this.captcha =
+        process.env.VUE_APP_URL + "/captcha?type=login&sadf=" + Date.now();
     }
   }
 };
