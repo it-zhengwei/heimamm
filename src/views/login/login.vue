@@ -44,10 +44,17 @@
 </template>
 
 <script>
-import { setItem } from "@/utils/local.js";
+import { setItem, getItem } from "@/utils/local.js";
 import { login } from "@/api/getCaptcha.js";
 import register from "@/components/register.vue";
 export default {
+  created() {
+    //判断是否有token   如果没有返回undefined
+    if (getItem()) {
+      //跳转到layout页
+      this.$router.push("/layout");
+    }
+  },
   components: {
     register
   },

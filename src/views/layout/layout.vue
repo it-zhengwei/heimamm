@@ -3,7 +3,7 @@
     <el-container class="layout">
       <el-header class="header">
         <ul class="top">
-          <li class="el-icon-s-fold menu"></li>
+          <li class="el-icon-s-fold menu" @click="fold=!fold"></li>
           <li class="layout_logo">
             <img src="@/assets/img/layout-logo.png" alt />
           </li>
@@ -19,27 +19,27 @@
         </ul>
       </el-header>
       <el-container>
-        <el-aside width="200px" class="nav">
-          <el-menu default-active="2" class="el-menu-vertical-demo">
+        <el-aside width="auto" class="nav">
+          <el-menu default-active="2" class="el-menu-vertical-demo" :collapse="fold">
             <el-menu-item index="2">
-              <i class="el-icon-menu"></i>
+              <i class="el-icon-pie-chart"></i>
               <span slot="title">数据概览</span>
             </el-menu-item>
 
             <el-menu-item index="4">
-              <i class="el-icon-setting"></i>
+              <i class="el-icon-user"></i>
               <span slot="title">用户列表</span>
             </el-menu-item>
-            <el-menu-item index="4">
-              <i class="el-icon-setting"></i>
+            <el-menu-item index="5">
+              <i class="el-icon-edit-outline"></i>
               <span slot="title">题库列表</span>
             </el-menu-item>
-            <el-menu-item index="4">
-              <i class="el-icon-setting"></i>
+            <el-menu-item index="6">
+              <i class="el-icon-office-building"></i>
               <span slot="title">企业列表</span>
             </el-menu-item>
-            <el-menu-item index="4">
-              <i class="el-icon-setting"></i>
+            <el-menu-item index="7">
+              <i class="el-icon-notebook-2"></i>
               <span slot="title">学科列表</span>
             </el-menu-item>
           </el-menu>
@@ -57,6 +57,7 @@ import { getUser, exit } from "@/api/getUser.js";
 export default {
   data() {
     return {
+      fold: false,
       baseUrl: process.env.VUE_APP_URL,
       userList: ""
     };
@@ -141,10 +142,14 @@ export default {
   }
   .nav {
     height: 769px;
-    background-color: red;
+    background-color: #ffffff;
   }
   .main {
     background-color: yellow;
   }
+}
+.el-menu-vertical-demo:not(.el-menu--collapse) {
+  width: 200px;
+  min-height: 400px;
 }
 </style>
