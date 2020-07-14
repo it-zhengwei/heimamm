@@ -20,31 +20,38 @@
       </el-header>
       <el-container>
         <el-aside width="auto" class="nav">
-          <el-menu default-active="2" class="el-menu-vertical-demo" :collapse="fold">
-            <el-menu-item index="2">
+          <el-menu
+            :default-active="$route.path"
+            :router="true"
+            class="el-menu-vertical-demo"
+            :collapse="fold"
+          >
+            <el-menu-item index="/layout/data">
               <i class="el-icon-pie-chart"></i>
               <span slot="title">数据概览</span>
             </el-menu-item>
 
-            <el-menu-item index="4">
+            <el-menu-item index="/layout/userList">
               <i class="el-icon-user"></i>
               <span slot="title">用户列表</span>
             </el-menu-item>
-            <el-menu-item index="5">
+            <el-menu-item index="/layout/questionList">
               <i class="el-icon-edit-outline"></i>
               <span slot="title">题库列表</span>
             </el-menu-item>
-            <el-menu-item index="6">
+            <el-menu-item index="/layout/enterpriseList">
               <i class="el-icon-office-building"></i>
               <span slot="title">企业列表</span>
             </el-menu-item>
-            <el-menu-item index="7">
+            <el-menu-item index="/layout/subject">
               <i class="el-icon-notebook-2"></i>
               <span slot="title">学科列表</span>
             </el-menu-item>
           </el-menu>
         </el-aside>
-        <el-main class="main">Main</el-main>
+        <el-main class="main">
+          <router-view></router-view>
+        </el-main>
       </el-container>
     </el-container>
   </div>
@@ -103,7 +110,7 @@ export default {
         width: 34px;
         height: 30px;
         font-size: 32px;
-        margin: 0 24px 0 15px;
+        margin: 0 24px 0 0;
       }
       .layout_logo {
         width: 33px;
@@ -145,9 +152,12 @@ export default {
     background-color: #ffffff;
   }
   .main {
+    width: 100%;
+    height: 769px;
     background-color: yellow;
   }
 }
+// 如果有.el-menu-vertical-demo这个类没有.el-menu--collapse这个类这个样式就生效  collapse控制着.el-menu--collapse
 .el-menu-vertical-demo:not(.el-menu--collapse) {
   width: 200px;
   min-height: 400px;

@@ -31,7 +31,7 @@ newAxios.interceptors.response.use(
       removeItem()
       //跳转到登录页
       //因为在js里 this.$router是在VUE实例对象里使用 这里不适用  因为this.$router=router
-      router.push("./login")
+      router.push("/login")
       //返回错误  终止执行then
       return Promise.reject("请登录")
     } else {
