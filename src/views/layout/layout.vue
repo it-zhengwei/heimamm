@@ -10,9 +10,9 @@
           <li class="layout_title">黑马面面</li>
           <li class="layout_null"></li>
           <li class="layout_avatar">
-            <img src="@/assets/img/layout-avatar.png" alt />
+            <img v-if="userList!=''" :src="baseUrl+'/'+userList.avatar" alt />
           </li>
-          <li class="username">李达,您好</li>
+          <li class="username">{{userList.username}},您好</li>
           <li class="layout_out">
             <el-button type="primary">退出</el-button>
           </li>
@@ -27,7 +27,21 @@
 </template>
 
 <script>
-export default {};
+import { getUser } from "@/api/getUser.js";
+export default {
+  data() {
+    return {
+      baseUrl: process.env.VUE_APP_URL,
+      userList: ""
+    };
+  },
+  created() {
+    getUser().then(res => {
+      // window.console.log(res);
+      this.userList = res.data;
+    });
+  }
+};
 </script>
 
 <style lang='less'>
@@ -72,6 +86,7 @@ export default {};
         height: 43px;
         img {
           width: 100%;
+          border-radius: 50%;
         }
       }
       .username {
