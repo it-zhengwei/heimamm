@@ -3,16 +3,20 @@
     <el-container class="layout">
       <el-header class="header">
         <ul class="top">
-          <li class="el-icon-s-fold menu" @click="fold=!fold"></li>
+          <li class="el-icon-s-fold menu" @click="fold = !fold"></li>
           <li class="layout_logo">
             <img src="@/assets/img/layout-logo.png" alt />
           </li>
           <li class="layout_title">黑马面面</li>
           <li class="layout_null"></li>
           <li class="layout_avatar">
-            <img v-if="userList!=''" :src="baseUrl+'/'+userList.avatar" alt />
+            <img
+              v-if="$store.state.userList != ''"
+              :src="baseUrl + '/' + $store.state.userList.avatar"
+              alt
+            />
           </li>
-          <li class="username">{{userList.username}},您好</li>
+          <li class="username">{{ $store.state.userList.username }},您好</li>
           <li class="layout_out">
             <el-button type="primary" @click="Exit">退出</el-button>
           </li>
@@ -59,39 +63,41 @@
 
 <script>
 //导入删除token的方法
-import { removeItem } from "@/utils/local.js";
-import { getUser, exit } from "@/api/getUser.js";
+import { removeItem } from "@/utils/local.js"
+import { getUser, exit } from "@/api/getUser.js"
 export default {
   data() {
     return {
       fold: false,
       baseUrl: process.env.VUE_APP_URL,
-      userList: ""
-    };
+      userList: "",
+    }
   },
   methods: {
     //退出
     Exit() {
-      exit().then(res => {
+      exit().then((res) => {
         //提示用户
-        this.$message.success("退出成功" + res.message);
+        this.$message.success("退出成功" + res.message)
         //删除token
-        removeItem();
+        removeItem()
         //跳转到登录页
-        this.$router.push("/login");
-      });
-    }
+        this.$router.push("/login")
+      })
+    },
   },
   created() {
-    getUser().then(res => {
+    getUser().then((res) => {
       // window.console.log(res);
-      this.userList = res.data;
-    });
-  }
-};
+      //把获取的用户信息保存到vuex共享数据管理里  任何组件都可以使用
+      //因为公用的用户信息放在数据共享管理里 可以减少服务器压力
+      this.$store.state.userList = res.data
+    })
+  },
+}
 </script>
 
-<style lang='less'>
+<style lang="less">
 .layout {
   width: 100%;
   height: 100%;
