@@ -1,17 +1,17 @@
 <template>
   <div>
     <el-card>
-      <el-form :model="form" label-width="70px" :inline="true">
-        <el-form-item label="学科编号">
+      <el-form ref="form" :rules="rules" :model="form" label-width="70px" :inline="true">
+        <el-form-item label="学科编号" prop="rid">
           <el-input v-model="form.rid" class="setWidth"></el-input>
         </el-form-item>
-        <el-form-item v-model="form.name" label="学科名称">
-          <el-input class="setWidth"></el-input>
+        <el-form-item label="学科名称" prop="name">
+          <el-input v-model="form.name" class="setWidth"></el-input>
         </el-form-item>
-        <el-form-item label="创建者">
+        <el-form-item label="创建者" prop="username">
           <el-input v-model="form.username" class="setWidth"></el-input>
         </el-form-item>
-        <el-form-item label="状态">
+        <el-form-item label="状态" prop="status">
           <el-select v-model="form.status" placeholder="请选择状态" class="setWidth">
             <el-option value="1" label="禁用"></el-option>
             <el-option value="0" label="开启"></el-option>
@@ -19,7 +19,7 @@
         </el-form-item>
         <el-form-item>
           <el-button type="primary">搜索</el-button>
-          <el-button>清除</el-button>
+          <el-button @click="reset">清除</el-button>
           <el-button type="primary">+新增学科</el-button>
         </el-form-item>
       </el-form>
@@ -54,8 +54,6 @@
 
       <el-pagination
         background
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange"
         :current-page="2"
         :page-sizes="[10, 20, 30, 40]"
         :page-size="40"
@@ -81,8 +79,21 @@ export default {
         rid: "",
         username: "",
         status: ""
+      },
+      rules: {
+        name: [],
+        // page: "",
+        // limit: "",
+        rid: [],
+        username: [],
+        status: []
       }
     };
+  },
+  methods: {
+    reset() {
+      this.$refs.form.resetFields();
+    }
   },
   created() {
     subjectList().then(res => {
