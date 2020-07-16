@@ -168,7 +168,7 @@ export default {
   .main {
     width: 100%;
     height: 769px;
-    background-color: yellow;
+    background-color: #e8e9ec;
   }
 }
 // 如果有.el-menu-vertical-demo这个类没有.el-menu--collapse这个类这个样式就生效  collapse控制着.el-menu--collapse

@@ -24,21 +24,30 @@
         </el-form-item>
       </el-form>
     </el-card>
-    <el-card>
-      <el-table :data="subject">
-        <el-table-column label="序号" prop="id">
+    <el-card class="subject">
+      <el-table :data="subject" stripe>
+        <el-table-column label="序号" prop="id" width="60">
           <template slot-scope="scope">
             <div>{{scope.$index+1}}</div>
           </template>
         </el-table-column>
-        <el-table-column label="学科编号" prop="rid"></el-table-column>
-        <el-table-column label="学科名称" prop="name"></el-table-column>
-        <el-table-column label="简称" prop="short_name"></el-table-column>
-        <el-table-column label="创建者" prop="intro"></el-table-column>
-        <el-table-column label="创建日期" prop="create_time"></el-table-column>
-        <el-table-column label="状态" prop="status">
+        <el-table-column label="学科编号" prop="rid" width="120"></el-table-column>
+        <el-table-column label="学科名称" prop="name" width="160"></el-table-column>
+        <el-table-column label="简称" prop="short_name" width="130"></el-table-column>
+        <el-table-column label="创建者" prop="intro" width="160"></el-table-column>
+        <el-table-column label="创建日期" prop="create_time" width="210"></el-table-column>
+        <el-table-column label="状态" prop="status" width="100">
           <template slot-scope="scope">
-            <div>{{scope.row.status==1?'启用':'禁用'}}</div>
+            <div :class="{red:scope.row.status==0}">{{scope.row.status==1?'启用':'禁用'}}</div>
+          </template>
+        </el-table-column>
+        <el-table-column label="操作">
+          <template>
+            <div>
+              <el-button>编辑</el-button>
+              <el-button>禁用</el-button>
+              <el-button>删除</el-button>
+            </div>
           </template>
         </el-table-column>
       </el-table>
@@ -76,5 +85,11 @@ export default {
 <style lang="less">
 .setWidth .el-input__inner {
   width: 150px;
+}
+.subject {
+  margin-top: 20px;
+}
+.red {
+  color: #ff3d3d;
 }
 </style>

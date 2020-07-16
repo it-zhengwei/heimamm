@@ -50,7 +50,7 @@ const router = new VueRouter({
           path: "/layout/questionList",
           component: questionList,
           meta: {
-            title: "问题列表",
+            title: "题库列表",
           },
         },
         {
