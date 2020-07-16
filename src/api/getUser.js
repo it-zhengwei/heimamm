@@ -16,10 +16,5 @@ function exit() {
     url: "/logout",
   })
 }
-//获取学科列表
-function subjectList() {
-  return newAxios({
-    url: "/subject/list",
-  })
-}
-export { getUser, exit, subjectList }
+
+export { getUser, exit }

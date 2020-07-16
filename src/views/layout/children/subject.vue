@@ -66,7 +66,7 @@
 
 <script>
 //导入接口
-import { subjectList } from "@/api/getUser.js";
+import { subjectList } from "@/api/subjectList.js";
 export default {
   data() {
     return {
