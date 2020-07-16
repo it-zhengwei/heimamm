@@ -63,38 +63,46 @@
 
 <script>
 //导入删除token的方法
-import { removeItem } from "@/utils/local.js"
-import { getUser, exit } from "@/api/getUser.js"
+import { removeItem } from "@/utils/local.js";
+import { getUser, exit } from "@/api/getUser.js";
 export default {
   data() {
     return {
       fold: false,
       baseUrl: process.env.VUE_APP_URL,
-      userList: "",
-    }
+      userList: ""
+    };
   },
   methods: {
     //退出
     Exit() {
-      exit().then((res) => {
-        //提示用户
-        this.$message.success("退出成功" + res.message)
-        //删除token
-        removeItem()
-        //跳转到登录页
-        this.$router.push("/login")
+      //element-ui的弹框
+      this.$confirm("你确定要退出", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消"
       })
-    },
+        .then(() => {
+          exit().then(() => {
+            //提示用户
+            this.$message.success("退出成功");
+            //删除token
+            removeItem();
+            //跳转到登录页
+            this.$router.push("/login");
+          });
+        })
+        .catch(() => {});
+    }
   },
   created() {
-    getUser().then((res) => {
+    getUser().then(res => {
       // window.console.log(res);
       //把获取的用户信息保存到vuex共享数据管理里  任何组件都可以使用
       //因为公用的用户信息放在数据共享管理里 可以减少服务器压力
-      this.$store.state.userList = res.data
-    })
-  },
-}
+      this.$store.state.userList = res.data;
+    });
+  }
+};
 </script>
 
 <style lang="less">
