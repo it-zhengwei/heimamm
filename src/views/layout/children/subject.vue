@@ -51,6 +51,17 @@
           </template>
         </el-table-column>
       </el-table>
+
+      <el-pagination
+        background
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
+        :current-page="2"
+        :page-sizes="[10, 20, 30, 40]"
+        :page-size="40"
+        layout="total, sizes, prev, pager, next, jumper"
+        :total="300"
+      ></el-pagination>
     </el-card>
   </div>
 </template>
