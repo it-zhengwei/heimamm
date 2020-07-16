@@ -53,6 +53,9 @@
       </el-table>
 
       <el-pagination
+        @current-change="updateCurrent"
+        @size-change="updateSize"
+        class="pagination"
         background
         :current-page="2"
         :page-sizes="[10, 20, 30, 40]"
@@ -93,6 +96,14 @@ export default {
   methods: {
     reset() {
       this.$refs.form.resetFields();
+    },
+    updateCurrent(page) {
+      //页面改变就触发  page是当前页
+      window.console.log(page);
+    },
+    updateSize(size) {
+      //页容量改变就触发  size是当前页容量
+      window.console.log(size);
     }
   },
   created() {
@@ -113,5 +124,9 @@ export default {
 }
 .red {
   color: #ff3d3d;
+}
+.pagination {
+  margin-top: 20px;
+  text-align: center;
 }
 </style>
