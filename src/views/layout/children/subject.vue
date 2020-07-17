@@ -20,7 +20,7 @@
         <el-form-item>
           <el-button type="primary" @click="search">搜索</el-button>
           <el-button @click="reset">清除</el-button>
-          <el-button type="primary">+新增学科</el-button>
+          <el-button type="primary" @click="add">+新增学科</el-button>
         </el-form-item>
       </el-form>
     </el-card>
@@ -65,13 +65,21 @@
         :total="total"
       ></el-pagination>
     </el-card>
+    <!-- @子组件方法名=父组件方法名   在子组件this.$emit('子组件方法名')就可以触发父组件的search方法 -->
+    <addSubject ref="addSubject" @search="search"></addSubject>
   </div>
 </template>
 
 <script>
 //导入接口
 import { subjectList, setStatus } from "@/api/subjectList.js";
+//导入添加学科组件
+import addSubject from "@/components/addSubject.vue";
 export default {
+  //注册
+  components: {
+    addSubject
+  },
   data() {
     return {
       total: 0,
@@ -135,6 +143,7 @@ export default {
         this.total = res.data.pagination.total;
       });
     },
+    //搜索功能
     search() {
       //把默认页码改为第一页
       this.pagination.page = 1;
@@ -148,6 +157,11 @@ export default {
         //更新数据
         this.getData();
       });
+    },
+    //新增学科
+    add() {
+      //父传子
+      this.$refs.addSubject.isShow = true;
     }
   },
   created() {

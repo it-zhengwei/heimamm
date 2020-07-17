@@ -14,5 +14,14 @@ function setStatus(data) {
     method: "post",
   })
 }
+//新增学科
+function addSubject(data) {
+  return newAxios({
+    url: "/subject/add",
+    method: "post",
+    data,
+  })
+}
 //暴露出去
-export { subjectList, setStatus }
+
+export { subjectList, setStatus, addSubject }
