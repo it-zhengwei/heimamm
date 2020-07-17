@@ -47,7 +47,7 @@
             <div>
               <el-button @click="edit(scope.row)">编辑</el-button>
               <el-button @click="status(scope.row.id)">{{scope.row.status==0?'启用':'禁用'}}</el-button>
-              <el-button>删除</el-button>
+              <el-button @click="del(scope.row.id)">删除</el-button>
             </div>
           </template>
         </el-table-column>
@@ -72,7 +72,7 @@
 
 <script>
 //导入接口
-import { subjectList, setStatus } from "@/api/subjectList.js";
+import { subjectList, setStatus, deleteSubject } from "@/api/subjectList.js";
 //导入添加学科组件
 import addSubject from "@/components/addSubject.vue";
 export default {
@@ -166,6 +166,23 @@ export default {
       this.mode = "edit";
       //把当前行的数据给子组件的form对象   如果直接赋值对象过去 是给地址 会相互影响 所以深拷贝出一个地址不同的对象
       this.$refs.addSubject.form = JSON.parse(JSON.stringify(data));
+    },
+    //删除功能
+    del(id) {
+      // 弹出框提示用户是否删除
+      this.$confirm("你确定要删除", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消"
+      })
+        .then(() => {
+          deleteSubject({ id }).then(() => {
+            //提示用户
+            this.$message.success("删除成功");
+            //执行搜索功能刷新数据   因为如果是原地刷新如果是最后一样的最后一条数据会出现bug 所以刷新就跳转到第一页就可以解决
+            this.search();
+          });
+        })
+        .catch(() => {});
     }
   },
   created() {

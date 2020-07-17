@@ -30,6 +30,14 @@ function editSubject(data) {
     data,
   })
 }
+//删除学科
+function deleteSubject(data) {
+  return newAxios({
+    url: "/subject/remove",
+    method: "post",
+    data,
+  })
+}
 //暴露出去
 
-export { subjectList, setStatus, addSubject, editSubject }
+export { subjectList, setStatus, addSubject, editSubject, deleteSubject }
