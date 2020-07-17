@@ -124,7 +124,7 @@ export default {
         width: 34px;
         height: 30px;
         font-size: 32px;
-        margin: 0 24px 0 0;
+        margin: 0 7px 0 0;
       }
       .layout_logo {
         width: 33px;
