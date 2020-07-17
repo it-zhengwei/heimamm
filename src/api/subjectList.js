@@ -22,6 +22,14 @@ function addSubject(data) {
     data,
   })
 }
+//编辑学科
+function editSubject(data) {
+  return newAxios({
+    url: "/subject/edit",
+    method: "post",
+    data,
+  })
+}
 //暴露出去
 
-export { subjectList, setStatus, addSubject }
+export { subjectList, setStatus, addSubject, editSubject }

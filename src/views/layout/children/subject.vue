@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-card>
-      <el-form ref="form" :rules="rules" :model="form" label-width="70px" :inline="true">
+      <el-form ref="form" :model="form" label-width="70px" :inline="true">
         <el-form-item label="学科编号" prop="rid">
           <el-input v-model="form.rid" class="setWidth"></el-input>
         </el-form-item>
@@ -45,7 +45,7 @@
         <el-table-column label="操作">
           <template v-slot="scope">
             <div>
-              <el-button>编辑</el-button>
+              <el-button @click="edit(scope.row)">编辑</el-button>
               <el-button @click="status(scope.row.id)">{{scope.row.status==0?'启用':'禁用'}}</el-button>
               <el-button>删除</el-button>
             </div>
@@ -66,7 +66,7 @@
       ></el-pagination>
     </el-card>
     <!-- @子组件方法名=父组件方法名   在子组件this.$emit('子组件方法名')就可以触发父组件的search方法 -->
-    <addSubject ref="addSubject" @search="search"></addSubject>
+    <addSubject ref="addSubject" @search="search" @getData="getData" :mode="mode"></addSubject>
   </div>
 </template>
 
@@ -82,6 +82,7 @@ export default {
   },
   data() {
     return {
+      mode: "",
       total: 0,
       subject: [],
       something: "",
@@ -96,14 +97,6 @@ export default {
       pagination: {
         page: 1,
         size: 2
-      },
-      rules: {
-        name: [],
-        // page: "",
-        // limit: "",
-        rid: [],
-        username: [],
-        status: []
       }
     };
   },
@@ -160,8 +153,19 @@ export default {
     },
     //新增学科
     add() {
+      //改变状态值
+      this.mode = "add";
       //父传子
       this.$refs.addSubject.isShow = true;
+    },
+    //编辑学科
+    edit(data) {
+      //显示对话框  与新增共用一个对话框
+      this.$refs.addSubject.isShow = true;
+      //传递一个状态值给子组件 让子组件知道是编辑
+      this.mode = "edit";
+      //把当前行的数据给子组件的form对象   如果直接赋值对象过去 是给地址 会相互影响 所以深拷贝出一个地址不同的对象
+      this.$refs.addSubject.form = JSON.parse(JSON.stringify(data));
     }
   },
   created() {
