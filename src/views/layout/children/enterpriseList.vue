@@ -20,7 +20,7 @@
         <el-form-item>
           <el-button type="primary" @click="search">搜索</el-button>
           <el-button @click="delForm">清除</el-button>
-          <el-button type="primary">+新增企业</el-button>
+          <el-button type="primary" @click="add">+新增企业</el-button>
         </el-form-item>
       </el-form>
     </el-card>
@@ -30,7 +30,7 @@
           <template v-slot="scope">{{scope.$index+1}}</template>
         </el-table-column>
         <el-table-column label="企业编号" prop="eid" width="120px"></el-table-column>
-        <el-table-column label="企业名称" prop="name" width="170px"></el-table-column>
+        <el-table-column label="企业名称" prop="name" width="200px"></el-table-column>
         <el-table-column label="创建者" prop="username" width="170px"></el-table-column>
         <el-table-column label="创建日期" prop="create_time" width="250px"></el-table-column>
         <el-table-column label="状态" prop="status" width="150px">
@@ -56,13 +56,20 @@
         :total="total"
       ></el-pagination>
     </el-card>
+    <addEnterprise ref="son" @search="search"></addEnterprise>
   </div>
 </template>
 
 <script>
+//导入组件
+import addEnterprise from "@/components/addEnterprise.vue";
 //导入接口
 import { getList, setStatus } from "@/api/enterpriseList/enterpriseList.js";
 export default {
+  //注册
+  components: {
+    addEnterprise
+  },
   data() {
     return {
       total: 0,
@@ -139,6 +146,11 @@ export default {
         //刷新数据
         this.getData();
       });
+    },
+    // 新增企业功能
+    add() {
+      //获取子组件的isShow 父传子
+      this.$refs.son.isShow = true;
     }
   },
   created() {

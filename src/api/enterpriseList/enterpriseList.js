@@ -14,5 +14,13 @@ function setStatus(data) {
     data,
   })
 }
+//添加企业功能
+function addEnterpriseList(data) {
+  return newAxios({
+    url: "/enterprise/add",
+    method: "post",
+    data,
+  })
+}
 //暴露出去
-export { getList, setStatus }
+export { getList, setStatus, addEnterpriseList }
