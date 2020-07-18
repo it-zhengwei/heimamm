@@ -46,6 +46,15 @@
           </template>
         </el-table-column>
       </el-table>
+      <el-pagination
+        @size-change="sizeChange"
+        @current-change="currentChange"
+        :current-page="pagination.page"
+        :page-sizes="[2,10, 20, 30, 40]"
+        :page-size="pagination.size"
+        layout="total, sizes, prev, pager, next, jumper"
+        :total="total"
+      ></el-pagination>
     </el-card>
   </div>
 </template>
@@ -56,6 +65,11 @@ import { getList } from "@/api/enterpriseList/enterpriseList.js";
 export default {
   data() {
     return {
+      total: 0,
+      pagination: {
+        page: 1,
+        size: 2
+      },
       tableList: [], //初始化一定要数组
       form: {
         name: "", //	否	string	企业名称
@@ -67,12 +81,42 @@ export default {
       }
     };
   },
+  methods: {
+    //页容量改变执行的回调函数
+    sizeChange(size) {
+      //把默认的页容量改变为当前页容量
+      this.pagination.size = size;
+      //获取第一页的数据
+      this.pagination.page = 1;
+      //获取数据
+      this.getData();
+    },
+    //页码改变执行的回调函数
+    currentChange(page) {
+      //把默认的页码改变为当前页码
+      (this.pagination.page = page),
+        //获取数据
+        this.getData();
+    },
+    //获取列表数据的方法
+    getData() {
+      //获取企业列表
+      //默认获取第一页 页容量为2的企业列表
+      let params = {
+        page: this.pagination.page,
+        limit: this.pagination.size
+      };
+      getList(params).then(res => {
+        // window.console.log(res);
+        //把响应的数据保存起来
+        this.tableList = res.data.items;
+        //保存总条数
+        this.total = res.data.pagination.total;
+      });
+    }
+  },
   created() {
-    //获取企业列表
-    getList().then(res => {
-      // window.console.log(res);
-      this.tableList = res.data.items;
-    });
+    this.getData();
   }
 };
 </script>
