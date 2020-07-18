@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-card class="top">
-      <el-form :inline="true" :model="form" label-width="70px">
+      <el-form ref="form" :inline="true" :model="form" label-width="70px">
         <el-form-item label="企业编号" prop="eid">
           <el-input v-model="form.eid" class="setWidth"></el-input>
         </el-form-item>
@@ -18,8 +18,8 @@
           </el-select>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary">搜索</el-button>
-          <el-button>清除</el-button>
+          <el-button type="primary" @click="search">搜索</el-button>
+          <el-button @click="delForm">清除</el-button>
           <el-button type="primary">+新增企业</el-button>
         </el-form-item>
       </el-form>
@@ -41,7 +41,7 @@
         <el-table-column label="操作">
           <template v-slot="scope">
             <el-button>编程</el-button>
-            <el-button>{{scope.status==0?'启用':'禁用'}}</el-button>
+            <el-button @click="updateStatus(scope.row.id)">{{scope.status==0?'启用':'禁用'}}</el-button>
             <el-button>删除</el-button>
           </template>
         </el-table-column>
@@ -61,7 +61,7 @@
 
 <script>
 //导入接口
-import { getList } from "@/api/enterpriseList/enterpriseList.js";
+import { getList, setStatus } from "@/api/enterpriseList/enterpriseList.js";
 export default {
   data() {
     return {
@@ -103,6 +103,8 @@ export default {
       //获取企业列表
       //默认获取第一页 页容量为2的企业列表
       let params = {
+        //把搜索栏的参数也作为接口参数
+        ...this.form,
         page: this.pagination.page,
         limit: this.pagination.size
       };
@@ -112,6 +114,30 @@ export default {
         this.tableList = res.data.items;
         //保存总条数
         this.total = res.data.pagination.total;
+      });
+    },
+    //搜索功能
+    search() {
+      //默认搜索第一页的数据
+      this.pagination.page = 1;
+      //获取数据
+      this.getData();
+    },
+    //清除表单内容功能
+    delForm() {
+      //获取form的this并且调用它的resetFields()清空并且清除表单验证方法
+      this.$refs.form.resetFields();
+      //获取第一页的数据
+      this.search();
+    },
+    //修改状态
+    updateStatus(id) {
+      //发送请求
+      setStatus({ id }).then(() => {
+        //提示用户
+        this.$message.success("设置状态成功");
+        //刷新数据
+        this.getData();
       });
     }
   },
