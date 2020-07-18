@@ -10,6 +10,7 @@
         </el-form-item>
         <el-form-item label="角色" prop="role_id">
           <el-select placeholder="请选择状态" v-model="form.role_id">
+            <el-option value="1" label="超级管理员"></el-option>
             <el-option value="2" label="管理员"></el-option>
             <el-option value="3" label="老师"></el-option>
             <el-option value="4" label="学生"></el-option>
@@ -56,7 +57,7 @@
         :total="total"
       ></el-pagination>
     </el-card>
-    <userList ref="user" @search="search" mode="mode"></userList>
+    <userList ref="user" @search="search" mode="mode" @getData="getData"></userList>
   </div>
 </template>
 
@@ -152,6 +153,12 @@ export default {
       this.mode = "edit";
       //把整行数据给子组件的form
       this.$refs.user.form = JSON.parse(JSON.stringify(data));
+      if (this.$refs.user.form.status == 0) {
+        this.$refs.user.form.status = "禁用";
+      } else {
+        this.$refs.user.form.status = "开启";
+      }
+      this.$refs.user.form.role_id = this.$refs.user.form.role;
       //显示对话框
       this.$refs.user.isShow = true;
     },

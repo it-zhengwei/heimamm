@@ -13,8 +13,9 @@
       </el-form-item>
       <el-form-item label="角色" prop="role_id">
         <el-select placeholder="请选择角色" v-model="form.role_id">
-          <el-option value="3" label="老师"></el-option>
+          <el-option value="1" label="超级管理员"></el-option>
           <el-option value="2" label="管理员"></el-option>
+          <el-option value="3" label="老师"></el-option>
           <el-option value="4" label="学生"></el-option>
         </el-select>
       </el-form-item>
@@ -71,17 +72,21 @@ export default {
             addUser(this.form).then(() => {
               //提示用户
               this.$message.success("新增成功");
+              //刷新数据
+              this.$emit("search");
+              //关闭对话框
+              this.isShow = false;
             });
           } else {
             editUser(this.form).then(() => {
               //提示用户
               this.$message.success("编辑成功");
+              //刷新数据
+              this.$emit("getData");
+              //关闭对话框
+              this.isShow = false;
             });
           }
-          //刷新数据
-          this.$emit("search");
-          //关闭对话框
-          this.isShow = false;
         } else {
           //提示用户
           this.$message.error("请完善信息");
