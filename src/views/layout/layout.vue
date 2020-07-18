@@ -100,6 +100,23 @@ export default {
       //把获取的用户信息保存到vuex共享数据管理里  任何组件都可以使用
       //因为公用的用户信息放在数据共享管理里 可以减少服务器压力
       this.$store.state.userList = res.data;
+      //获取用户信息的权限保存到vuex
+      this.$store.state.quanxian = res.data.role;
+      //因为获取用户信息权限是异步操作  可能还没有获取到就又跳转了  达不到拦截的效果 所以在这里再拦截一下
+      if (!this.$route.meta.quanxianList.includes(this.$store.state.quanxian)) {
+        //提示用户
+        this.$message.error("您没有权限访问，请联系管理员");
+        //删除token
+        removeItem();
+        //跳转到login
+        this.$router.push("/login");
+      }
+      //判断账号是否被禁用了
+      if (res.data.status == 0) {
+        this.$message.warning("您账号已经被冻结，请联系管理员");
+        removeItem();
+        this.$router.push("/login");
+      }
     });
   }
 };

@@ -13,6 +13,9 @@ import userList from "@/views/layout/children/userList.vue"
 import NProgress from "nprogress"
 import "nprogress/nprogress.css"
 import nProgress from "nprogress"
+import store from "@/vuex/index.js"
+import { Message } from "element-ui"
+import { removeItem } from "@/utils/local.js"
 const router = new VueRouter({
   //路由元信息 meta属性
   routes: [
@@ -21,6 +24,7 @@ const router = new VueRouter({
       component: login,
       meta: {
         title: "登录",
+        quanxianList: ["超级管理员", "老师", "学生", "管理员"],
       },
     },
     {
@@ -37,6 +41,7 @@ const router = new VueRouter({
           component: data,
           meta: {
             title: "数据概览",
+            quanxianList: ["超级管理员", "老师", "管理员"],
           },
         },
         {
@@ -44,6 +49,7 @@ const router = new VueRouter({
           component: enterpriseList,
           meta: {
             title: "企业列表",
+            quanxianList: ["超级管理员", "管理员", "老师"],
           },
         },
         {
@@ -51,6 +57,7 @@ const router = new VueRouter({
           component: questionList,
           meta: {
             title: "题库列表",
+            quanxianList: ["超级管理员", "老师", "管理员"],
           },
         },
         {
@@ -58,6 +65,7 @@ const router = new VueRouter({
           component: subject,
           meta: {
             title: "学科列表",
+            quanxianList: ["超级管理员", "老师", "管理员"],
           },
         },
         {
@@ -65,6 +73,7 @@ const router = new VueRouter({
           component: userList,
           meta: {
             title: "用户列表",
+            quanxianList: ["超级管理员", "管理员"],
           },
         },
       ],
@@ -74,6 +83,16 @@ const router = new VueRouter({
 //导航守卫  其实就是路由的拦截器
 //进入前导航守卫
 router.beforeEach((to, from, next) => {
+  //判断目标路由是否可以访问
+  if (!to.meta.quanxianList.includes(store.state.quanxian)) {
+    //提示用户
+    Message.error("您没有权限访问，请联系管理员")
+    //删除token
+    removeItem()
+    //跳转到/login
+    next("/login")
+  }
+
   //进度条开始
   NProgress.start()
   //运行通过

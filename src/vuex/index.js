@@ -8,6 +8,7 @@ Vue.use(Vuex)
 const store = new Vuex.Store({
   state: {
     userList: "",
+    quanxian: "超级管理员",
   },
 })
 //暴露出去
