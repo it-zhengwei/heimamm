@@ -20,14 +20,14 @@
         <el-form-item>
           <el-button type="primary" @click="search">搜索</el-button>
           <el-button @click="delForm">清除</el-button>
-          <el-button type="primary" @click="add">+新增企业</el-button>
+          <el-button type="primary" @click="addE">+新增企业</el-button>
         </el-form-item>
       </el-form>
     </el-card>
     <el-card class="footer">
       <el-table :data="tableList">
         <el-table-column label="序号" width="90px">
-          <template v-slot="scope">{{scope.$index+1}}</template>
+          <template v-slot="scope">{{(pagination.page-1)*pagination.size+scope.$index+1}}</template>
         </el-table-column>
         <el-table-column label="企业编号" prop="eid" width="120px"></el-table-column>
         <el-table-column label="企业名称" prop="name" width="200px"></el-table-column>
@@ -40,9 +40,9 @@
         </el-table-column>
         <el-table-column label="操作">
           <template v-slot="scope">
-            <el-button>编程</el-button>
+            <el-button @click="edit(scope.row)">编辑</el-button>
             <el-button @click="updateStatus(scope.row.id)">{{scope.status==0?'启用':'禁用'}}</el-button>
-            <el-button>删除</el-button>
+            <el-button @click="del(scope.row.id)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -56,7 +56,7 @@
         :total="total"
       ></el-pagination>
     </el-card>
-    <addEnterprise ref="son" @search="search"></addEnterprise>
+    <addEnterprise ref="son" @search="search" :mode="mode" @getData="getData"></addEnterprise>
   </div>
 </template>
 
@@ -64,7 +64,11 @@
 //导入组件
 import addEnterprise from "@/components/addEnterprise.vue";
 //导入接口
-import { getList, setStatus } from "@/api/enterpriseList/enterpriseList.js";
+import {
+  getList,
+  setStatus,
+  delEnterpriseList
+} from "@/api/enterpriseList/enterpriseList.js";
 export default {
   //注册
   components: {
@@ -72,6 +76,7 @@ export default {
   },
   data() {
     return {
+      mode: "add",
       total: 0,
       pagination: {
         page: 1,
@@ -148,9 +153,37 @@ export default {
       });
     },
     // 新增企业功能
-    add() {
+    addE() {
+      //改变状态为add
+      this.mode = "add";
       //获取子组件的isShow 父传子
       this.$refs.son.isShow = true;
+    },
+    //编辑功能
+    edit(data) {
+      //因为跟新增公用一个页面 所以要区分是编辑还是新增
+      //所以改变状态为edit
+      this.mode = "edit";
+      //把整行数据赋值给form表单数据   因为对象赋值会相互影响  所以深拷贝就是完全两个不同地址的值了
+      this.$refs.son.form = JSON.parse(JSON.stringify(data));
+      //显示对话框
+      this.$refs.son.isShow = true;
+    },
+    //删除功能
+    del(id) {
+      this.$confirm("你确定要删除", "温馨提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消"
+      })
+        .then(() => {
+          delEnterpriseList({ id }).then(() => {
+            //提示用户
+            this.$message.success("删除成功");
+            //执行搜索功能
+            this.search();
+          });
+        })
+        .catch(() => {});
     }
   },
   created() {

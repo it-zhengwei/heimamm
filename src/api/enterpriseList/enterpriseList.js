@@ -22,5 +22,27 @@ function addEnterpriseList(data) {
     data,
   })
 }
+//编辑功能
+function editEnterpriseList(data) {
+  return newAxios({
+    url: "/enterprise/edit",
+    method: "post",
+    data,
+  })
+}
+//删除功能
+function delEnterpriseList(data) {
+  return newAxios({
+    url: "/enterprise/remove",
+    method: "post",
+    data,
+  })
+}
 //暴露出去
-export { getList, setStatus, addEnterpriseList }
+export {
+  getList,
+  setStatus,
+  addEnterpriseList,
+  editEnterpriseList,
+  delEnterpriseList,
+}

@@ -1,6 +1,6 @@
 <template>
   <el-dialog :visible.sync="isShow" class="addEnterprise" width="600px">
-    <div slot="title" class="title">新增企业</div>
+    <div slot="title" class="title">{{mode=="add"?'新增企业':'编辑企业'}}</div>
     <el-form ref="form" :rules="rules" :model="form" label-width="100px">
       <el-form-item label="企业编号" prop="eid">
         <el-input v-model="form.eid"></el-input>
@@ -27,15 +27,30 @@
 
 <script>
 //导入接口
-import { addEnterpriseList } from "@/api/enterpriseList/enterpriseList.js";
+import {
+  addEnterpriseList,
+  editEnterpriseList
+} from "@/api/enterpriseList/enterpriseList.js";
 export default {
+  props: ["mode"],
   //侦听器
   watch: {
     //侦听isShow的变化
     isShow(newVal) {
       if (newVal == false) {
-        //清空表单数据
-        this.$refs.form.resetFields();
+        //因为编辑时的数据影响到了新增
+        //所以进行表单初始化
+        (this.form = {
+          eid: "", //	是	string	企业编号
+          name: "", //	是	string	企业名称
+          short_name: "", //	是	string	简称
+          intro: "", //	是	string	企业简介
+          remark: "" //	否	string	备注
+        }),
+          //清空表单验证  因为初始化会导致表单的验证 所以等数据渲染完成再清除表单验证
+          this.$nextTick(() => {
+            this.$refs.form.clearValidate();
+          });
       }
     }
   },
@@ -45,15 +60,28 @@ export default {
       //调用form表单的全局验证
       this.$refs.form.validate(v => {
         if (v) {
-          //发送请求
-          addEnterpriseList(this.form).then(() => {
-            //提示用户
-            this.$message.success("新增成功");
-            //刷新数据  调用父组件的搜索功能
-            this.$emit("search");
-            //关闭对话框
-            this.isShow = false;
-          });
+          //判断是编辑还是新增
+          if (this.mode == "add") {
+            //发送请求
+            addEnterpriseList(this.form).then(() => {
+              //提示用户
+              this.$message.success("新增成功");
+              //刷新数据  调用父组件的搜索功能
+              this.$emit("search");
+              //关闭对话框
+              this.isShow = false;
+            });
+          } else {
+            //执行编辑功能
+            editEnterpriseList(this.form).then(() => {
+              //提示用户
+              this.$message.success("编辑成功");
+              //关闭对话框
+              this.isShow = false;
+              //刷新数据  调用父组件的默认获取列表功能
+              this.$emit("getData");
+            });
+          }
         } else {
           this.$message.error("请完善信息");
         }
