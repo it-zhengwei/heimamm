@@ -25,7 +25,7 @@
     <el-card class="footer">
       <el-table :data="userList">
         <el-table-column label="序号" width="70px">
-          <template v-slot="scope">{{scope.$index+1}}</template>
+          <template v-slot="scope">{{(pagination.page-1)*pagination.size+scope.$index+1}}</template>
         </el-table-column>
         <el-table-column label="用户名" prop="username" width="120px"></el-table-column>
         <el-table-column label="电话" prop="phone" width="170px"></el-table-column>
@@ -79,19 +79,35 @@ export default {
     };
   },
   created() {
-    user().then(res => {
-      // window.console.log(res);
-      this.userList = res.data.items;
-    });
+    this.getData();
   },
   methods: {
+    //封装获取用户列表默认的信息
+    getData() {
+      let params = {
+        page: this.pagination.page,
+        limit: this.pagination.size
+      };
+      user(params).then(res => {
+        // window.console.log(res);
+        this.userList = res.data.items;
+        //把当前总条数给total
+        this.total = res.data.pagination.total;
+      });
+    },
     //页容量改变
     sizeChange(size) {
-      window.console.log(size);
+      // window.console.log(size);
+      //获取当前页容量的信息
+      this.pagination.size = size;
+      this.getData();
     },
     //页码改变
     currentChange(page) {
-      window.console.log(page);
+      // window.console.log(page);
+      //获取当前页码的数据
+      this.pagination.page = page;
+      this.getData();
     }
   }
 };
