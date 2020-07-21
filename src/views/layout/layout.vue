@@ -112,11 +112,11 @@ export default {
         this.$router.push("/login");
       }
       //判断账号是否被禁用了
-      if (res.data.status == 0) {
-        this.$message.warning("您账号已经被冻结，请联系管理员");
-        removeItem();
-        this.$router.push("/login");
-      }
+      // if (res.data.status == 0) {
+      //   this.$message.warning("您账号已经被冻结，请联系管理员");
+      //   removeItem();
+      //   this.$router.push("/login");
+      // }
     });
   }
 };
