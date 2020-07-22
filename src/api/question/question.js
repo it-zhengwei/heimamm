@@ -22,5 +22,21 @@ function add(data) {
     method: "post",
   })
 }
+//编辑题目
+function edit(data) {
+  return newAxios({
+    url: "/question/edit",
+    method: "post",
+    data,
+  })
+}
+//删除功能
+function dele(data) {
+  return newAxios({
+    url: "/question/remove",
+    method: "post",
+    data,
+  })
+}
 //暴露出去
-export { questionList, setStatus, add }
+export { questionList, setStatus, add, edit, dele }

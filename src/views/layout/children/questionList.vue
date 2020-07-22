@@ -133,12 +133,12 @@
         <el-table-column label="访问量" prop="reads" width="70px"></el-table-column>
         <el-table-column label="操作">
           <template v-slot="scope">
-            <el-button type="text">编辑</el-button>
+            <el-button type="text" @click="edit(scope.row)">编辑</el-button>
             <el-button
               type="text"
               @click="update(scope.row.id)"
             >{{ scope.row.status == 0 ? "开启" : "禁用" }}</el-button>
-            <el-button type="text">删除</el-button>
+            <el-button type="text" @click="del(scope.row.id)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -153,7 +153,13 @@
         :total="total"
       ></el-pagination>
     </el-card>
-    <addQuestion @search="search" ref="addQuestion" :typeArr="typeArr"></addQuestion>
+    <addQuestion
+      @getData="getData"
+      @search="search"
+      ref="addQuestion"
+      :mode="mode"
+      :typeArr="typeArr"
+    ></addQuestion>
   </div>
 </template>
 
@@ -164,8 +170,8 @@ import addQuestion from "@/components/addQuestion.vue";
 import { subjectList } from "@/api/subjectList.js";
 //导入企业接口
 import { getList } from "@/api/enterpriseList/enterpriseList.js";
-//导入题库列表接口、设置状态接口
-import { questionList, setStatus } from "@/api/question/question.js";
+//导入题库列表接口、设置状态接口、删除接口
+import { questionList, setStatus, dele } from "@/api/question/question.js";
 export default {
   //注册
   components: {
@@ -173,6 +179,8 @@ export default {
   },
   data() {
     return {
+      //状态值
+      mode: "add",
       //题库列表
       tableList: [],
       //阶段数组
@@ -207,6 +215,34 @@ export default {
     };
   },
   methods: {
+    //删除功能
+    del(id) {
+      this.$confirm("你确定要删除", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      })
+        .then(() => {
+          dele({ id }).then(() => {
+            //提示用户
+            this.$message.success("删除成功");
+            //刷新数据
+            this.search();
+          });
+        })
+        .catch(() => {});
+    },
+    //编辑功能
+    edit(data) {
+      //改变状态值为edit
+      this.mode = "edit";
+
+      //深拷贝当前行数据赋值给子组件的form表单
+      this.$refs.addQuestion.form = JSON.parse(JSON.stringify(data));
+
+      //打开对话框
+      this.$refs.addQuestion.isShow = true;
+    },
     //页容量改变就执行的函数
     sizeChange(size) {
       // window.console.log(size)
@@ -225,16 +261,21 @@ export default {
     },
     //获取题库列表
     getData() {
-      window.console.log(this.form);
       let data = {
         ...this.form,
         page: this.page,
         limit: this.size
       };
       questionList(data).then(res => {
-        // window.console.log(res)
+        window.console.log(res);
         //保存题库信息
         this.tableList = res.data.items;
+        this.tableList.forEach(v => {
+          //把city转化为数组
+          v.city = v.city.split(",");
+          //把多选答案转化为数组
+          v.multiple_select_answer = v.multiple_select_answer.split(",");
+        });
         //保存总条数
         this.total = res.data.pagination.total;
       });
@@ -263,6 +304,8 @@ export default {
     },
     //新增功能
     add() {
+      //改变状态值
+      this.mode = "add";
       //打开对话框
       this.$refs.addQuestion.isShow = true;
     }

@@ -1,6 +1,6 @@
 <template>
   <el-dialog class="addQuestion" :visible.sync="isShow" :fullscreen="true">
-    <div slot="title" class="title">新增题库测试</div>
+    <div slot="title" class="title">{{mode=='add'?'新增题库测试':'编辑题库测试'}}</div>
     <el-form ref="form" class="form" :rules="rules" :model="form" label-width="100px">
       <el-form-item label="学科" prop="subject">
         <el-select v-model="form.subject" placeholder="请选择学科">
@@ -84,7 +84,7 @@
 
 <script>
 //导入接口
-import { add } from "@/api/question/question.js";
+import { add, edit } from "@/api/question/question.js";
 //导入上传组件
 import upload from "./upload";
 //导入单选组件
@@ -153,21 +153,32 @@ export default {
     allSelect,
     upload
   },
-  props: ["typeArr"],
+  props: ["typeArr", "mode"],
   methods: {
     //提交功能
     submit() {
       this.$refs.form.validate(v => {
         if (v) {
-          add(this.form).then(() => {
-            //提示用户
-            this.$message.success("新增成功");
+          if (this.mode == "add") {
+            add(this.form).then(() => {
+              //提示用户
+              this.$message.success("新增成功");
 
-            //刷新数据
-            this.$emit("search");
-            //关闭对话框
-            this.isShow = false;
-          });
+              //刷新数据
+              this.$emit("search");
+              //关闭对话框
+              this.isShow = false;
+            });
+          } else {
+            edit(this.form).then(() => {
+              //提示用户
+              this.$message.success("编辑成功");
+              //刷新数据
+              this.$emit("getData");
+              //关闭对话框
+              this.isShow = false;
+            });
+          }
         } else {
           this.$message.error("验证失败");
         }
