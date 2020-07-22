@@ -14,5 +14,13 @@ function setStatus(data) {
     method: "post",
   })
 }
+//新增题目
+function add(data) {
+  return newAxios({
+    url: "/question/add",
+    data,
+    method: "post",
+  })
+}
 //暴露出去
-export { questionList, setStatus }
+export { questionList, setStatus, add }

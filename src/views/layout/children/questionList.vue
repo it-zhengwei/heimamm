@@ -18,9 +18,12 @@
           <el-col :span="6">
             <el-form-item label="阶段" prop="step">
               <el-select v-model="form.step">
-                <el-option label="单选" :value="1"></el-option>
-                <el-option label="多选" :value="2"></el-option>
-                <el-option label="简答" :value="3"></el-option>
+                <el-option
+                  :label="item"
+                  :value="index + 1"
+                  v-for="(item, index) in stepObj"
+                  :key="index"
+                ></el-option>
               </el-select>
             </el-form-item>
           </el-col>
@@ -39,9 +42,12 @@
           <el-col :span="6">
             <el-form-item label="题型" prop="type">
               <el-select v-model="form.type">
-                <el-option label="单选" :value="1"></el-option>
-                <el-option label="多选" :value="2"></el-option>
-                <el-option label="简答" :value="3"></el-option>
+                <el-option
+                  :label="item"
+                  :value="index + 1"
+                  v-for="(item, index) in typeArr"
+                  :key="index"
+                ></el-option>
               </el-select>
             </el-form-item>
           </el-col>
@@ -50,7 +56,7 @@
           <el-col :span="6">
             <el-form-item label="难度" prop="difficulty">
               <el-select v-model="form.difficulty">
-                <el-option label="简单" :value="1"></el-option>
+                <el-option label="简单" :value="0"></el-option>
                 <el-option label="一般" :value="2"></el-option>
                 <el-option label="困难" :value="3"></el-option>
               </el-select>
@@ -75,8 +81,7 @@
                 v-model="form.create_date"
                 type="date"
                 placeholder="选择日期"
-              >
-              </el-date-picker>
+              ></el-date-picker>
             </el-form-item>
           </el-col>
         </el-row>
@@ -89,7 +94,7 @@
           <el-col :span="11" :offset="1">
             <el-button type="primary" @click="search">搜索</el-button>
             <el-button @click="reset">清除</el-button>
-            <el-button type="primary">+新增试题</el-button>
+            <el-button type="primary" @click="add">+新增试题</el-button>
           </el-col>
         </el-row>
       </el-form>
@@ -97,9 +102,9 @@
     <el-card class="table">
       <el-table :data="tableList" border>
         <el-table-column label="序号" width="70px">
-          <template v-slot="scope">
-            {{ (page - 1) * size + scope.$index + 1 }}
-          </template>
+          <template v-slot="scope">{{
+            (page - 1) * size + scope.$index + 1
+          }}</template>
         </el-table-column>
         <el-table-column label="题目" width="250px">
           <template v-slot="scope">
@@ -114,27 +119,36 @@
           </template>
         </el-table-column>
         <el-table-column label="题型" width="120px">
-          <template v-slot="scope">
-            {{ difficultyArr[scope.row.difficulty] }}
-          </template>
+          <template v-slot="scope">{{
+            difficultyArr[scope.row.difficulty]
+          }}</template>
         </el-table-column>
-        <el-table-column label="企业" prop="enterprise_name" width="120px">
-        </el-table-column>
-        <el-table-column label="创建者" prop="username" width="120px">
-        </el-table-column>
+        <el-table-column
+          label="企业"
+          prop="enterprise_name"
+          width="120px"
+        ></el-table-column>
+        <el-table-column
+          label="创建者"
+          prop="username"
+          width="120px"
+        ></el-table-column>
         <el-table-column label="状态" width="120px">
-          <template v-slot="scope">
-            {{ scope.row.status == 0 ? "禁用" : "开启" }}
-          </template>
+          <template v-slot="scope">{{
+            scope.row.status == 0 ? "禁用" : "开启"
+          }}</template>
         </el-table-column>
-        <el-table-column label="访问量" prop="reads" width="120px">
-        </el-table-column>
+        <el-table-column
+          label="访问量"
+          prop="reads"
+          width="120px"
+        ></el-table-column>
         <el-table-column label="操作">
           <template v-slot="scope">
             <el-button type="text">编辑</el-button>
-            <el-button type="text" @click="update(scope.row.id)">{{
-              scope.row.status == 0 ? "开启" : "禁用"
-            }}</el-button>
+            <el-button type="text" @click="update(scope.row.id)">
+              {{ scope.row.status == 0 ? "开启" : "禁用" }}
+            </el-button>
             <el-button type="text">删除</el-button>
           </template>
         </el-table-column>
@@ -148,13 +162,19 @@
         :page-size="size"
         layout="total, sizes, prev, pager, next, jumper"
         :total="total"
-      >
-      </el-pagination>
+      ></el-pagination>
     </el-card>
+    <addQuestion
+      @search="search"
+      ref="addQuestion"
+      :typeArr="typeArr"
+    ></addQuestion>
   </div>
 </template>
 
 <script>
+//导入新增题库测试组件
+import addQuestion from "@/components/addQuestion.vue"
 //导入学科接口
 import { subjectList } from "@/api/subjectList.js"
 //导入企业接口
@@ -162,6 +182,10 @@ import { getList } from "@/api/enterpriseList/enterpriseList.js"
 //导入题库列表接口、设置状态接口
 import { questionList, setStatus } from "@/api/question/question.js"
 export default {
+  //注册
+  components: {
+    addQuestion,
+  },
   data() {
     return {
       //题库列表
@@ -170,6 +194,8 @@ export default {
       stepObj: ["初级", "中级", "高级"],
       //难度数组
       difficultyArr: ["简单", "一般", "困难"],
+      //题型数组
+      typeArr: ["单选", "多选", "简答"],
       //学科列表
       subject: [],
       //企业列表
@@ -248,6 +274,11 @@ export default {
         //刷新数据
         this.getData()
       })
+    },
+    //新增功能
+    add() {
+      //打开对话框
+      this.$refs.addQuestion.isShow = true
     },
   },
   created() {
